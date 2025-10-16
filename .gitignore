@@ -1,0 +1,38 @@
+# Environment variables (NEVER commit these!)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Database
+data/
+*.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+
+# Virtual environments
+venv/
+env/
+ENV/
+rlinsight-mcp/
+
+# Tests (optional - you might want to keep these)
+tests/__pycache__/
