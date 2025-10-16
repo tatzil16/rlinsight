@@ -68,7 +68,7 @@ python main.py
 ```
 
 The bot will:
-- Poll Ballchasing every 60 seconds for new matches
+- Poll Ballchasing every 5 seconds for new matches
 - Analyze your performance compared to win/loss patterns
 - Post coaching feedback to Discord
 
