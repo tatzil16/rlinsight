@@ -269,7 +269,7 @@ class MatchDatabase:
         else:
             return 'win' if orange_goals > blue_goals else 'loss'
     
-    def get_win_loss_averages(self, last_n_matches: int = 20) -> Dict:
+    def get_win_loss_averages(self, last_n_matches: int = 10) -> Dict:
         """
         Calculate separate averages for wins and losses.
         
