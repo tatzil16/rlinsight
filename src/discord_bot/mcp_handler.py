@@ -1,5 +1,6 @@
 """MCP query handler for Discord interactions."""
 
+import sys
 import asyncio
 import json
 import os
@@ -47,7 +48,7 @@ async def query_mcp(question: str, max_iterations: int = 10) -> str:
     
     # 2. Start MCP server
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=["-m", "src.mcp_server.server"],
         env=None
     )
