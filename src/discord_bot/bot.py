@@ -3,6 +3,7 @@
 import discord
 import os
 from typing import Optional
+from src.discord_bot.mcp_handler import query_mcp
 
 
 class GameInsightBot:
@@ -64,6 +65,23 @@ class GameInsightBot:
                         return
             
             print(f"⚠️  Could not find #{self.channel_name} channel")
+
+        @self.client.event
+        async def on_message(message):
+            """Called when any message is sent in channels the bot can see."""
+            print(f"📨 Message received from {message.author}: {message.content[:50]}")
+            
+            # Ignore messages from the bot itself
+            if message.author == self.client.user:
+                print("   ⏭️  Ignoring (message from self)")
+                return
+            
+            # Check if bot was mentioned
+            if self.client.user in message.mentions:
+                print(f"   🎯 Bot was mentioned! Handling query...")
+                await self._handle_query(message)
+            else:
+                print(f"   ⏭️  Bot not mentioned in this message")
     
     async def post_report(self, message: str):
         """
@@ -85,6 +103,47 @@ class GameInsightBot:
             print(f"✅ Posted report to #{self.channel_name}")
         except Exception as e:
             print(f"❌ Error posting to Discord: {e}")
+
+    async def _handle_query(self, message):
+        """
+        Handle an @mention query from a user.
+        
+        Args:
+            message: Discord message object
+        """
+        try:
+            # Extract the question (remove the bot mention)
+            question = message.content
+            for mention in message.mentions:
+                question = question.replace(f'<@{mention.id}>', '').strip()
+            
+            if not question:
+                await message.channel.send("Hey! You mentioned me but didn't ask anything. Try: @GameInsight Why did I lose my last game?")
+                return
+            
+            # Send "thinking" message
+            thinking_msg = await message.channel.send("🤔 Analyzing your matches...")
+            
+            # Query MCP
+            answer = await query_mcp(question)
+            
+            # Delete thinking message
+            await thinking_msg.delete()
+            
+            # Send answer (handle long responses)
+            if len(answer) <= 2000:
+                await message.channel.send(answer)
+            else:
+                # Split into chunks if too long
+                chunks = [answer[i:i+1900] for i in range(0, len(answer), 1900)]
+                for chunk in chunks:
+                    await message.channel.send(chunk)
+            
+        except Exception as e:
+            await message.channel.send(f"❌ Sorry, something went wrong: {str(e)}")
+            print(f"Error handling query: {e}")
+            import traceback
+            traceback.print_exc()
     
     def run(self):
         """Start the bot (blocking call)."""
